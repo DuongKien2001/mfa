@@ -1,0 +1,105 @@
+DATASETS:
+  GTA5:
+    DATA_PATH: '/kaggle/input/gtav-dataset/GTAV/images'
+    GT_PATH: '/kaggle/input/gtav-dataset/GTAV/labels'
+
+  CITYSCAPES:
+    DATA_PATH: '/kaggle/input/cityscapes/Cityspaces/images'
+    GT_PATH: '/kaggle/input/cityscapes/Cityspaces/gtFine'
+    PSEUDO_PATH: '/kaggle/input/pseudo-labels/pseudo_label_0.45'
+
+  SYNTHIA:
+    DATA_PATH: './data/RAND_CITYSCAPES/RGB'
+    GT_PATH: './data/RAND_CITYSCAPES/GT/LABELS'
+  
+  OUT_DIR: '/kaggle/working'
+
+INPUT:
+  USE_SOURCE_DATA: True
+  SOURCE:
+    N_CLASSES: 19
+    NAME: 'GTA5'
+    SIZE_TRAIN: [560, 1120]
+    SIZE_RESIZE: [1052, 1914]
+    USE_RESIZE: False
+    USE_RANDOMCROP: True
+    USE_HFLIP: True
+    SPLIT: 'all'
+    USE_RANDOMSCALE: True
+    SCALELIMIT: [-0.1, 0.4]
+  TARGET:
+    N_CLASSES: 19
+    NAME: 'CITYSCAPES'
+    SIZE_TRAIN: [560, 1120]
+    SIZE_RESIZE: [1024, 2048]
+    SIZE_TEST: [1024, 2048]
+    USE_RESIZE: False
+    USE_RANDOMCROP: True
+    USE_HFLIP: True
+    SPLIT: 'train'
+    USE_RANDOMSCALE: True
+    SCALELIMIT: [-0.1, 0.1]
+
+DATALOADER:
+  NUM_WORKERS: 2
+
+MODEL:
+  NAME: 'deeplabv2'
+  N_CHANNEL: 3
+  N_CLASS: 19
+  DEVICE: 'cuda'
+  BACKBONE_NAME: 'resnet101'
+  DEVICE_IDS: "'0'"
+  DROPOUT: 0.5
+  WEIGHT: ''
+
+SOLVER:
+  OPTIMIZER_NAME: "SGD"
+
+  TEMPORAL_CONSIST_WEIGHT: 1.0
+  CROSS_MODEL_CONSIST_WEIGHT: 0.5
+  ALPHA_START: 0.2
+  ALPHA_END: 0.7
+
+  BASE_LR: 2e-4
+  MIN_LR: 0.0
+  BIAS_LR_FACTOR: 1
+  USE_WARMUP: True
+
+  MOMENTUM: 0.9
+
+  WEIGHT_DECAY: 2e-4
+  WEIGHT_DECAY_BIAS: 5e-4
+
+  LR_SCHEDULER: 'poly'
+  GAMMA: 0.9
+  STEPS: [5, 10]
+  MIX_PRECISION: True
+
+  MAX_EPOCHS: 6
+  MAX_STEPS: 70000
+  WARMUP_STEP: 2000
+  CHECKPOINT_PERIOD: 5000
+  LOG_PERIOD: 100
+  EVAL_PERIOD: 5000
+  TRAIN_LOG: False
+  START_SAVE_STEP: 10000
+  START_EVAL_STEP: 10000
+
+  PER_BATCH: 2
+  RESUME: True
+  RESUME_CHECKPOINT_A: r'/kaggle/input/pretrained/gta5_55000.pth'
+  RESUME_CHECKPOINT_B: r'/kaggle/input/pretrained/BestGTA5Cov.pth'
+  RESUME_CHECKPOINT_MEAN_B: r'/kaggle/input/train-epoch6/mfa_gta5_fixscale/deeplabv2_Mean_B_step6.pth'
+  RESUME_CHECKPOINT_MEAN_A: r'/kaggle/input/train-epoch6/mfa_gta5_fixscale/deeplabv2_Mean_A_step6.pth'
+  TENSORBOARD:
+    USE: True
+    LOG_PERIOD: 20
+TEST:
+  WEIGHTB: r"/kaggle/input/train-epoch12/mfa_gta5_fixscale/deeplabv2_Mean_B.pth"
+  WEIGHTA: r"/kaggle/input/train-epoch12/mfa_gta5_fixscale/deeplabv2_Mean_A.pth"
+
+OUTPUT_DIR: "/kaggle/working/mfa_gta5_fixscale"
+
+
+
