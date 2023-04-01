@@ -12,7 +12,6 @@ DATASETS:
     DATA_PATH: './data/RAND_CITYSCAPES/RGB'
     GT_PATH: './data/RAND_CITYSCAPES/GT/LABELS'
   
-  OUT_DIR: '/kaggle/working'
 
 INPUT:
   USE_SOURCE_DATA: True
