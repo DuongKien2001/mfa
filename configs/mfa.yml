@@ -89,14 +89,9 @@ SOLVER:
   RESUME: True
   RESUME_CHECKPOINT_A: r'/kaggle/input/pretrained/gta5_55000.pth'
   RESUME_CHECKPOINT_B: r'/kaggle/input/pretrained/BestGTA5Cov.pth'
-  RESUME_CHECKPOINT_MEAN_B: r'/kaggle/input/train-epoch6/mfa_gta5_fixscale/deeplabv2_Mean_B_step6.pth'
-  RESUME_CHECKPOINT_MEAN_A: r'/kaggle/input/train-epoch6/mfa_gta5_fixscale/deeplabv2_Mean_A_step6.pth'
   TENSORBOARD:
     USE: True
     LOG_PERIOD: 20
-TEST:
-  WEIGHTB: r"/kaggle/input/train-epoch12/mfa_gta5_fixscale/deeplabv2_Mean_B.pth"
-  WEIGHTA: r"/kaggle/input/train-epoch12/mfa_gta5_fixscale/deeplabv2_Mean_A.pth"
 
 OUTPUT_DIR: "/kaggle/working/mfa_gta5_fixscale"
 
