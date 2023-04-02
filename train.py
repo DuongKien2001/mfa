@@ -101,9 +101,9 @@ def main():
     if output_dir and not os.path.exists(output_dir):
         os.makedirs(output_dir)
     num_gpus = args.gpus
-    logger = setup_logger('baseline', output_dir, 0)
-    logger.info('Using {} GPUS'.format(num_gpus))
-    logger.info('Running with config:\n{}'.format(cfg))
+    #logger = setup_logger('baseline', output_dir, 0)
+    #logger.info('Using {} GPUS'.format(num_gpus))
+    #logger.info('Running with config:\n{}'.format(cfg))
 
     args.world_size = args.gpus * args.nodes
     os.environ['MASTER_ADDR'] = 'localhost'
