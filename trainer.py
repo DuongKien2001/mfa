@@ -72,8 +72,9 @@ class BaseTrainer(object):
         if cfg.SOLVER.RESUME:
             self.load_param(self.model_A, cfg.SOLVER.RESUME_CHECKPOINT_A)
             self.load_param(self.model_B, cfg.SOLVER.RESUME_CHECKPOINT_B)
-            self.load_param(self.mode_mean_B, cfg.SOLVER.RESUME_CHECKPOINT_MEAN_B)
             self.load_param(self.mode_mean_A, cfg.SOLVER.RESUME_CHECKPOINT_MEAN_A)
+            self.load_param(self.mode_mean_B, cfg.SOLVER.RESUME_CHECKPOINT_MEAN_B)
+
         
         self.batch_cnt = 0
         self.logger = logging.getLogger('baseline.train')
