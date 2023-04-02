@@ -75,8 +75,8 @@ def train(gpu, args, cfg):
         torch.optim.swa_utils.update_bn(trainer.tt_dl, trainer.mean_model_A)
         torch.optim.swa_utils.update_bn(trainer.tt_dl, trainer.mean_model_B)
         trainer.mean_save()
-    trainer.evaluate(trainer.mean_model_A)
-    trainer.evaluate(trainer.mean_model_B)
+    trainer.evaluate(trainer.mean_model_A, trainer.res_recoder_A)
+    trainer.evaluate(trainer.mean_model_B, trainer.res_recoder_B)
     cleanup()
 
 
