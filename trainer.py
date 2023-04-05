@@ -21,6 +21,19 @@ from prettytable import PrettyTable
 from torch.cuda.amp import autocast as autocast
 import torch.distributed as dist
 import copy
+from torch.nn import MSELoss
+
+def cosine_pairwise(x):
+    
+    # convert to batch_size, num_vectors, vector_dimension
+    # from batch_size, vector_dimension, num_vectors
+    x = x.permute((0, 2, 1))
+
+    x = x.permute((1, 2, 0))
+    cos_sim_pairwise = F.cosine_similarity(x, x.unsqueeze(1), dim=-2)
+    cos_sim_pairwise = cos_sim_pairwise.permute((2, 0, 1))
+    return cos_sim_pairwise
+
 
 class result_recorder(object):
     def __init__(self, name, best_res=0.0, best_iter=0):
@@ -65,10 +78,11 @@ class BaseTrainer(object):
         self.res_recoder_A = result_recorder('mean_model_A')
         self.res_recoder_B = result_recorder('mean_model_B')
 
-        self.train_epoch = 55
+        self.train_epoch = 1
         self.optim_A = optimizer_A
         self.optim_B = optimizer_B
         self.scaler = scaler
+        self.lambda_sc = 1.0
         if cfg.SOLVER.RESUME:
             self.load_param(self.model_A, cfg.SOLVER.RESUME_CHECKPOINT_A)
             self.load_param(self.model_B, cfg.SOLVER.RESUME_CHECKPOINT_B)
@@ -86,12 +100,12 @@ class BaseTrainer(object):
             summary_dir = os.path.join(cfg.OUTPUT_DIR, 'summaries/')
             os.makedirs(summary_dir, exist_ok=True)
             self.summary_writer = SummaryWriter(log_dir=summary_dir)
-        self.current_iteration = 744*54
+        self.current_iteration = 744*0
 
         self.mean_model_A = torch.optim.swa_utils.AveragedModel(self.mode_mean_A, device=gpu)
         self.mean_model_B = torch.optim.swa_utils.AveragedModel(self.mode_mean_B, device=gpu)
-        self.mean_model_A.update_parameters(self.model_A)
-        self.mean_model_B.update_parameters(self.model_B)
+        #self.mean_model_A.update_parameters(self.model_A)
+        #self.mean_model_B.update_parameters(self.model_B)
 
         #assert self.is_equal(self.model_A, self.mean_model_A.module)
         #assert self.is_equal(self.model_B, self.mean_model_B.module)
@@ -250,6 +264,10 @@ class BaseTrainer(object):
 
             trg_output_A = self.model_A(target_data)
             trg_output_B = self.model_B(target_data)
+            # target data temporal consistency loss
+            with torch.no_grad():
+                trg_output_emma_A = self.mean_model_A(target_data).detach()
+                trg_output_emma_B = self.mean_model_B(target_data).detach()
 
             self.trg_loss_A = self.cross_entropy(trg_output_A, target_target)
             self.trg_loss_B = self.cross_entropy(trg_output_B, target_target)
@@ -257,16 +275,35 @@ class BaseTrainer(object):
             self.loss_A += self.trg_loss_A
             self.loss_B += self.trg_loss_B
 
-        # target data temporal consistency loss
-            with torch.no_grad():
-                trg_output_emma_A = self.mean_model_A(target_data).detach()
-                trg_output_emma_B = self.mean_model_B(target_data).detach()
+            student_logits_A = torch.flatten(trg_output_A, start_dim=2)
+            ema_logits_A = torch.flatten(trg_output_emma_A, start_dim=2)
+            student_logits_B = torch.flatten(trg_output_B, start_dim=2)
+            ema_logits_B = torch.flatten(trg_output_emma_B, start_dim=2)
 
+            selected_index = torch.randperm(student_logits_A.size()[-1])[:4]
+            student_logits_A = student_logits_A[:, :, selected_index]
+            ema_logits_A = ema_logits_A[:, :, selected_index]
+            student_pairwise_A = cosine_pairwise(student_logits_A)
+            ema_pairwise_A = cosine_pairwise(ema_logits_A)
+
+            selected_index = torch.randperm(student_logits_B.size()[-1])[:4]
+            student_logits_B = student_logits_B[:, :, selected_index]
+            ema_logits_B = ema_logits_B[:, :, selected_index]
+            student_pairwise_B = cosine_pairwise(student_logits_B)
+            ema_pairwise_B = cosine_pairwise(ema_logits_B)
+
+            
+            mse_loss = MSELoss()
+            structured_consistency_loss_A = self.lambda_sc * (mse_loss(student_pairwise_A,
+                                                           ema_pairwise_A))
+            structured_consistency_loss_B = self.lambda_sc * (mse_loss(student_pairwise_B,
+                                                           ema_pairwise_B))
+            
             self.loss_temporal_consist_A = self.consist_loss(F.softmax(trg_output_A, dim=1), F.softmax(trg_output_emma_A, dim=1))
             self.loss_temporal_consist_B = self.consist_loss(F.softmax(trg_output_B, dim=1), F.softmax(trg_output_emma_B, dim=1))
 
-            self.loss_A += self.temporal_consist_weight * self.loss_temporal_consist_A
-            self.loss_B += self.temporal_consist_weight * self.loss_temporal_consist_B
+            self.loss_A += self.temporal_consist_weight * self.loss_temporal_consist_A + structured_consistency_loss_A
+            self.loss_B += self.temporal_consist_weight * self.loss_temporal_consist_B + structured_consistency_loss_B
 
         # target data cross model consistency loss
             self.mean_model_A.eval()
