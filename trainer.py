@@ -86,8 +86,8 @@ class BaseTrainer(object):
         if cfg.SOLVER.RESUME:
             self.load_param(self.model_A, cfg.SOLVER.RESUME_CHECKPOINT_A)
             self.load_param(self.model_B, cfg.SOLVER.RESUME_CHECKPOINT_B)
-            self.load_param(self.mode_mean_A, cfg.SOLVER.RESUME_CHECKPOINT_MEAN_A)
-            self.load_param(self.mode_mean_B, cfg.SOLVER.RESUME_CHECKPOINT_MEAN_B)
+            #self.load_param(self.mode_mean_A, cfg.SOLVER.RESUME_CHECKPOINT_MEAN_A)
+            #self.load_param(self.mode_mean_B, cfg.SOLVER.RESUME_CHECKPOINT_MEAN_B)
         
         self.batch_cnt = 0
         self.logger = logging.getLogger('baseline.train')
@@ -102,10 +102,15 @@ class BaseTrainer(object):
             self.summary_writer = SummaryWriter(log_dir=summary_dir)
         self.current_iteration = 744*0
 
-        self.mean_model_A = torch.optim.swa_utils.AveragedModel(self.mode_mean_A, device=gpu)
-        self.mean_model_B = torch.optim.swa_utils.AveragedModel(self.mode_mean_B, device=gpu)
+        #self.mean_model_A = torch.optim.swa_utils.AveragedModel(self.mode_mean_A, device=gpu)
+        #self.mean_model_B = torch.optim.swa_utils.AveragedModel(self.mode_mean_B, device=gpu)
         #self.mean_model_A.update_parameters(self.model_A)
         #self.mean_model_B.update_parameters(self.model_B)
+        self.mean_model_A = torch.optim.swa_utils.AveragedModel(self.model_A, device=gpu)
+        self.mean_model_B = torch.optim.swa_utils.AveragedModel(self.model_B, device=gpu)
+        self.mean_model_A.update_parameters(self.model_A)
+        self.mean_model_B.update_parameters(self.model_B)
+
 
         #assert self.is_equal(self.model_A, self.mean_model_A.module)
         #assert self.is_equal(self.model_B, self.mean_model_B.module)
@@ -133,6 +138,14 @@ class BaseTrainer(object):
         if 'state_dict' in param_dict.keys():
             param_dict = param_dict['state_dict']
         
+        start_with_module = False
+        for k in model.state_dict().keys():
+            if k.startswith('module.'):
+                start_with_module = True
+                break
+        if start_with_module:
+            param_dict = {'module.'+k : v for k, v in param_dict.items() }
+
         if self.rank == 0:
             print('ignore_param:')
             print([k for k, v in param_dict.items() if k not in model.state_dict() or
