@@ -65,7 +65,7 @@ class BaseTrainer(object):
         self.res_recoder_A = result_recorder('mean_model_A')
         self.res_recoder_B = result_recorder('mean_model_B')
 
-        self.train_epoch = 44
+        self.train_epoch = 54
         self.optim_A = optimizer_A
         self.optim_B = optimizer_B
         self.scaler = scaler
@@ -74,7 +74,6 @@ class BaseTrainer(object):
             self.load_param(self.model_B, cfg.SOLVER.RESUME_CHECKPOINT_B)
             self.load_param(self.mode_mean_A, cfg.SOLVER.RESUME_CHECKPOINT_MEAN_A)
             self.load_param(self.mode_mean_B, cfg.SOLVER.RESUME_CHECKPOINT_MEAN_B)
-
         
         self.batch_cnt = 0
         self.logger = logging.getLogger('baseline.train')
@@ -87,7 +86,7 @@ class BaseTrainer(object):
             summary_dir = os.path.join(cfg.OUTPUT_DIR, 'summaries/')
             os.makedirs(summary_dir, exist_ok=True)
             self.summary_writer = SummaryWriter(log_dir=summary_dir)
-        self.current_iteration = 744*43
+        self.current_iteration = 744*53
 
         self.mean_model_A = torch.optim.swa_utils.AveragedModel(self.mode_mean_A, device=gpu)
         self.mean_model_B = torch.optim.swa_utils.AveragedModel(self.mode_mean_B, device=gpu)
@@ -170,6 +169,11 @@ class BaseTrainer(object):
             self.logger.info('-' * 20)
             self.save()
             self.mean_save()
+            if self.train_epoch == 55:
+                torch.optim.swa_utils.update_bn(self.tt_dl, self.mean_model_A)
+                torch.optim.swa_utils.update_bn(self.tt_dl, self.mean_model_B)
+                self.evaluate(self.mean_model_A, self.res_recoder_A)
+                self.evaluate(self.mean_model_B, self.res_recoder_B)
         self.train_epoch += 1
     
     def adjust_valid_alpha(self, power=1.1):
