@@ -75,7 +75,7 @@ SOLVER:
   STEPS: [5, 10]
   MIX_PRECISION: True
 
-  MAX_EPOCHS: 18
+  MAX_EPOCHS: 27
   MAX_STEPS: 700000
   WARMUP_STEP: 2000
   CHECKPOINT_PERIOD: 5000
@@ -87,8 +87,8 @@ SOLVER:
 
   PER_BATCH: 2
   RESUME: True
-  RESUME_CHECKPOINT_A: r'/kaggle/input/mfa-strloss/deeplabv2_A_step9.pth'
-  RESUME_CHECKPOINT_B: r'/kaggle/input/mfa-strloss/deeplabv2_B_step9.pth'
+  RESUME_CHECKPOINT_A: r'/kaggle/input/mfa-strloss/deeplabv2_A_step18.pth'
+  RESUME_CHECKPOINT_B: r'/kaggle/input/mfa-strloss/deeplabv2_B_step18.pth'
   RESUME_CHECKPOINT_MEAN_A: r'/kaggle/input/mfa-strloss/deeplabv2_Mean_A_step18.pth'
   RESUME_CHECKPOINT_MEAN_B: r'/kaggle/input/mfa-strloss/deeplabv2_Mean_B_step18.pth'
   TENSORBOARD:
