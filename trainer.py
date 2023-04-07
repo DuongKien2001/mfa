@@ -88,6 +88,8 @@ class BaseTrainer(object):
             self.load_param(self.model_B, cfg.SOLVER.RESUME_CHECKPOINT_B)
             self.load_param(self.mode_mean_A, cfg.SOLVER.RESUME_CHECKPOINT_MEAN_A)
             self.load_param(self.mode_mean_B, cfg.SOLVER.RESUME_CHECKPOINT_MEAN_B)
+            self.optim_A.load_state_dict(torch.load("/kaggle/input/mfa-strloss/deeplabv2_optim_A_step27.pth"))
+            self.optim_B.load_state_dict(torch.load("/kaggle/input/mfa-strloss/deeplabv2_optim_B_step27.pth"))
         
         self.batch_cnt = 0
         self.logger = logging.getLogger('baseline.train')
