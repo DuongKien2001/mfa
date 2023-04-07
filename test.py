@@ -29,7 +29,7 @@ def evaluate(modelA, modelB, dataloader, args, cfg, gpu, flip=True, save_res=Fal
             data = data.to(gpu)
             # data = torch.flip(data, (1,))  # in old version input channel is BGR, but now it is RGB
             outputs = softmax(modelA(data, upsample=True)) + softmax(modelB(data, upsample=True))
-            if flip:
+            if False:
                 outputs += softmax(torch.flip(modelA(torch.flip(data, (3,))), (3,))) + softmax(torch.flip(modelB(torch.flip(data, (3,))), (3,)))
             _, preds = torch.max(outputs, (1))
             # save result
