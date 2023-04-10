@@ -78,7 +78,7 @@ class BaseTrainer(object):
         self.res_recoder_A = result_recorder('mean_model_A')
         self.res_recoder_B = result_recorder('mean_model_B')
 
-        self.train_epoch = 28
+        self.train_epoch = 55
         self.optim_A = optimizer_A
         self.optim_B = optimizer_B
         self.scaler = scaler
@@ -88,8 +88,8 @@ class BaseTrainer(object):
             self.load_param(self.model_B, cfg.SOLVER.RESUME_CHECKPOINT_B)
             self.load_param(self.mode_mean_A, cfg.SOLVER.RESUME_CHECKPOINT_MEAN_A)
             self.load_param(self.mode_mean_B, cfg.SOLVER.RESUME_CHECKPOINT_MEAN_B)
-            self.optim_A.load_state_dict(torch.load("/kaggle/input/mfa-strloss/deeplabv2_optim_A_step27.pth"))
-            self.optim_B.load_state_dict(torch.load("/kaggle/input/mfa-strloss/deeplabv2_optim_B_step27.pth"))
+            #self.optim_A.load_state_dict(torch.load("/kaggle/input/mfa-strloss/deeplabv2_optim_A_step27.pth"))
+            #self.optim_B.load_state_dict(torch.load("/kaggle/input/mfa-strloss/deeplabv2_optim_B_step27.pth"))
         
         self.batch_cnt = 0
         self.logger = logging.getLogger('baseline.train')
@@ -102,7 +102,7 @@ class BaseTrainer(object):
             summary_dir = os.path.join(cfg.OUTPUT_DIR, 'summaries/')
             os.makedirs(summary_dir, exist_ok=True)
             self.summary_writer = SummaryWriter(log_dir=summary_dir)
-        self.current_iteration = 744*27
+        self.current_iteration = 744*54
 
         self.mean_model_A = torch.optim.swa_utils.AveragedModel(self.mode_mean_A, device=gpu)
         self.mean_model_B = torch.optim.swa_utils.AveragedModel(self.mode_mean_B, device=gpu)
