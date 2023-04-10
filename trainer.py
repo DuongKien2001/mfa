@@ -181,6 +181,7 @@ class BaseTrainer(object):
                     self.summary_writer.add_scalar('Train/lossB', self.loss_B, self.current_iteration)
                     self.summary_writer.add_scalar('Train/loss_sourceA', self.src_loss_A, self.current_iteration)
                     self.summary_writer.add_scalar('Train/loss_sourceB', self.src_loss_B, self.current_iteration)
+
             if self.current_iteration % self.cfg.SOLVER.LOG_PERIOD == 0:
                 self.logger.info('Epoch[{}] Iteration[{}] Loss_A: {:.3f}, Loss_B: {:.3f}, Loss_src_A: {:.3f}, Loss_trg_A: {:.3f}, Loss_tc_A: {:.3f}, Loss_cmc_A: {:.3f}, Base Lr: {:.2e}, Alpha: {:.2f}' \
                                     .format(self.train_epoch, self.current_iteration, self.loss_A, self.loss_B, self.src_loss_A, self.trg_loss_A, \

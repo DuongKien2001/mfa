@@ -88,7 +88,7 @@ SOLVER:
   PER_BATCH: 2
   RESUME: True
   RESUME_CHECKPOINT_A: r'/kaggle/input/mfa-strloss/deeplabv2_A_step27.pth'
-  RESUME_CHECKPOINT_B: r'/kaggle/input/mfa-strloss/deeplabv2_B_step27.pth
+  RESUME_CHECKPOINT_B: r'/kaggle/input/mfa-strloss/deeplabv2_B_step27.pth'
   RESUME_CHECKPOINT_MEAN_A: r'/kaggle/input/mfa-strloss/deeplabv2_Mean_A_step27.pth'
   RESUME_CHECKPOINT_MEAN_B: r'/kaggle/input/mfa-strloss/deeplabv2_Mean_B_step27.pth'
   TENSORBOARD:
