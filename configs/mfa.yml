@@ -90,7 +90,7 @@ SOLVER:
   RESUME_CHECKPOINT_A: r'/kaggle/input/mfa-uda1/deeplabv2_A_step'
   RESUME_CHECKPOINT_B: r'/kaggle/input/mfa-uda1/deeplabv2_B_step'
   RESUME_CHECKPOINT_MEAN_A: r'/kaggle/input/mfa-uda1/deeplabv2_Mean_A_step'
-  RESUME_CHECKPOINT_MEAN_B: r'/kaggle/input/mfa-uda1/deeplabv2_Mean_B_step54.pth'
+  RESUME_CHECKPOINT_MEAN_B: r'/kaggle/input/mfa-uda1/deeplabv2_Mean_B_step'
   TENSORBOARD:
     USE: True
     LOG_PERIOD: 20
