@@ -75,11 +75,11 @@ SOLVER:
   STEPS: [5, 10]
   MIX_PRECISION: True
 
-  MAX_EPOCHS: 62
-  MAX_STEPS: 700000
+  MAX_EPOCHS: 53
+  MAX_STEPS: 70000
   WARMUP_STEP: 2000
   CHECKPOINT_PERIOD: 5000
-  LOG_PERIOD: 100
+  LOG_PERIOD: 20
   EVAL_PERIOD: 50000
   TRAIN_LOG: False
   START_SAVE_STEP: 1000000
@@ -87,10 +87,10 @@ SOLVER:
 
   PER_BATCH: 2
   RESUME: True
-  RESUME_CHECKPOINT_A: r'/kaggle/input/mfa-uda1/deeplabv2_A_step'
-  RESUME_CHECKPOINT_B: r'/kaggle/input/mfa-uda1/deeplabv2_B_step'
-  RESUME_CHECKPOINT_MEAN_A: r'/kaggle/input/mfa-uda1/deeplabv2_Mean_A_step'
-  RESUME_CHECKPOINT_MEAN_B: r'/kaggle/input/mfa-uda1/deeplabv2_Mean_B_step'
+  RESUME_CHECKPOINT_A: r'/kaggle/input/mfa-uda1/deeplabv2_A_step43.pth'
+  RESUME_CHECKPOINT_B: r'/kaggle/input/mfa-uda1/deeplabv2_B_step43.pth'
+  RESUME_CHECKPOINT_MEAN_A: r'/kaggle/input/mfa-uda1/deeplabv2_Mean_A_step43.pth'
+  RESUME_CHECKPOINT_MEAN_B: r'/kaggle/input/mfa-uda1/deeplabv2_Mean_B_step43.pth'
   TENSORBOARD:
     USE: True
     LOG_PERIOD: 20
