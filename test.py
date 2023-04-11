@@ -63,7 +63,7 @@ def evaluate(modelA, modelB, dataloader, args, cfg, gpu, flip=True, save_res=Fal
     print('VAL_ACC: %s VAL_MEAN_IOU: %s VAL_KAPPA: %s \n' %
                          (val_acc, val_mean_IoU, val_kappa))
 
-def test_model(target_val_loader, args, cfg, gpu = 0):
+def test_model(i, target_val_loader, args, cfg, gpu = 0):
     from model import build_model
     from torchsummary import summary
     import torch
@@ -72,8 +72,8 @@ def test_model(target_val_loader, args, cfg, gpu = 0):
     
     modelA = build_model(cfg)
     # summary(model.cuda(), (3, 1024, 2048))
-    print('load from: ', cfg.SOLVER.RESUME_CHECKPOINT_MEAN_A)
-    param_dictA = torch.load(cfg.SOLVER.RESUME_CHECKPOINT_MEAN_A, map_location=lambda storage, loc: storage)
+    print('load from: ', cfg.SOLVER.RESUME_CHECKPOINT_MEAN_A+str(i)+".pth")
+    param_dictA = torch.load(cfg.SOLVER.RESUME_CHECKPOINT_MEAN_A+str(i)+".pth", map_location=lambda storage, loc: storage)
     #print(param_dict.keys())
     #if 'state_dict' in param_dict.keys():
     #    param_dict = param_dict['state_dict']
@@ -95,8 +95,8 @@ def test_model(target_val_loader, args, cfg, gpu = 0):
     
     modelB = build_model(cfg)
     # summary(model.cuda(), (3, 1024, 2048))
-    print('load from: ', cfg.SOLVER.RESUME_CHECKPOINT_MEAN_B)
-    param_dictB = torch.load(cfg.SOLVER.RESUME_CHECKPOINT_MEAN_B, map_location=lambda storage, loc: storage)
+    print('load from: ', cfg.SOLVER.RESUME_CHECKPOINT_MEAN_B+str(i)+".pth")
+    param_dictB = torch.load(cfg.SOLVER.RESUME_CHECKPOINT_MEAN_B+str(i)+".pth", map_location=lambda storage, loc: storage)
     #print(param_dict.keys())
     #if 'state_dict' in param_dict.keys():
     #    param_dict = param_dict['state_dict']
@@ -132,4 +132,5 @@ if __name__ == '__main__':
     if not os.path.exists(args.output):
         os.mkdir(args.output)
     _, _, target_val_loader = make_dataloader(cfg, 0)
-    test_model(target_val_loader, args, cfg, gpu=args.gpu)
+    for i in range(9):
+        test_model(i+1, target_val_loader, args, cfg, gpu=args.gpu)
