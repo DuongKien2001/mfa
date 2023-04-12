@@ -132,5 +132,5 @@ if __name__ == '__main__':
     if not os.path.exists(args.output):
         os.mkdir(args.output)
     _, _, target_val_loader = make_dataloader(cfg, 0)
-    for i in range(10):
-        test_model(i+44, target_val_loader, args, cfg, gpu=args.gpu)
+    for i in range(1):
+        test_model(i+14, target_val_loader, args, cfg, gpu=args.gpu)

@@ -1,25 +1,7 @@
-import torch
-def load_param(model, weight_path):
-        
-    print("Resume from checkpoint {}".format(weight_path))
-    param_dict = torch.load(weight_path, map_location=lambda storage, loc: storage)
-    if 'state_dict' in param_dict.keys():
-        param_dict = param_dict['state_dict']
-        
-        
-    print('ignore_param:')
-    print([k for k, v in param_dict.items() if k not in model.state_dict() or
-                    model.state_dict()[k].size() != v.size()])
-    print('unload_param:')
-    print([k for k, v in model.state_dict().items() if k not in param_dict.keys() or
-                    param_dict[k].size() != v.size()] )
+from tensorboardX import SummaryWriter
+summary_writer = SummaryWriter(log_dir='')
 
-    param_dict = {k: v for k, v in param_dict.items() if k in model.state_dict() and
-                        model.state_dict()[k].size() == v.size()}
-    for i in param_dict:
-        model.state_dict()[i].copy_(param_dict[i])
-from model import build_model
-from config import cfg
-cfg.merge_from_file("configs/mfa.yml")
-a = build_model(cfg)
-load_param(a,'C:\\Users\\PC\\Downloads\\weights\\deeplabv2_Mean_B_step6.pth')
+a = 0.5032440077257828, 0.5133949608329414, 0.5214424314790257, 0.5199936521946062, 0.5258448634591152, 0.5269781573592996, 0.5294371124881627, 0.5307826162858935, 0.5308880437667712, 0.5269902890662933, 0.5283109766306359, 0.5308885684203896, 0.528503138507204, 0.5316880232075075, 0.5323074607095117, 0.5314279853655616, 0.5315635831674197, 0.530467701727374, 0.5302865965715164, 0.5192586880271635, 0.5170605372601923, 0.5169304818669159, 0.5225049702921257, 0.5248793522235482, 0.5266479552302781, 0.5236328790711425, 0.5225310116465799, 0.5229023813097768, 0.5225663382978188, 0.5186746673490435, 0.5205982475283252, 0.5182970263930686, 0.5202275480729021, 0.5203723219136054
+
+for i in range(34):
+    summary_writer.add_scalar("validation/MFA_with_RCS", round(a[i]*100, 2), i+1)
